@@ -1,0 +1,125 @@
+# **Workflow**
+
+**Prefetch command**: this command takes the path to all of the SRA files and preps the SRAs for running with Kraken2.
+
+Written by M. Forcellati, adapted by J. Hoffman
+
+```
+# Accession all of the SRA files
+downloaddir=/path/to/your/raw_reads/
+
+# Get the Prefetch command from conda environment.
+conda activate /nas4/mforcellati/miniconda3/envs/CG2
+
+# List of every pair-end read file on NCBI SRA referred to mammoth genus
+filelist=/path/to/your/ACCESSION.txt
+
+# Change number for every "chunk" of sample analyzed.
+	#replace xx with number of samples
+for sample in {1..xx};
+do
+        specimen=$(sed "${sample}q;d" $filelist | awk '{print $1 }')
+        mkdir -p $downloaddir/${specimen}
+
+        cd $downloaddir
+
+        prefetch $specimen --output-directory $downloaddir
+done
+
+	#change this to the path for your directory
+qsub /nas5/user/path/scripts/PRJEB42269/fullPipeline.sh
+
+```
+
+**Full Pipeline**: this is the pipeline for running Kraken2 on the SRAs
+
+Written by M. Forcellati, adapted by J. Hoffman
+
+```
+#!/bin/bash
+#PBS -q batch
+#PBS -S /bin/bash
+#PBS -l ncpus=24
+#PBS -l mem=32G
+#PBS -l walltime=20:00:00
+#PBS -o /nas5/user/CG1/outerr/fullYOURFIlE.out # Note : Change user to your user
+#PBS -e /nas5/user/CG1/outerr/fullYOURFIlE.err # Note : Change user to your user
+#PBS -J 1-xx # Note: Change xx to number of samples.
+
+######################
+# Run full pipeline. #
+######################
+
+
+##############
+# Initialize #
+##############
+#enter your user. Ex: "jhoffman1"
+user = ""
+
+# List of files is necessary for the interactive job sample specificity
+	#replace with directory to your filelist
+filelist=/nas5/$user/CG1/scripts/PRJEB42269.txt
+
+# Directory for outputting trimmed reads [ temporary ]
+	#change to your output directory
+OutputDirTrim=/nas5/$user/CG1/trimmed_reads
+
+# Source of Prefetched reads
+	#change directory for the output from the PrefetchCommand.sh 
+DataDir=/nas5/$user/CG1/raw_reads
+
+# Initialize your bash profile.
+source ~/.bash_profile
+
+# Source conda so access to trimgalore.
+conda activate /nas4/mforcellati/miniconda3/envs/CG2
+
+
+# kraken out
+	#change to your own output 
+OUTDIR=/nas5/$user/CG1/analysis/kraken_run
+
+# final kraken out - change to project folder when done
+	#change this to your project folder (the SRA you're working on)
+FINALOUT=/nas5/$user/CG1/results/!!!
+
+##############################
+# fasterqdump and TrimGalore #
+ # Get specimen name
+        specimen=$(sed "${PBS_ARRAY_INDEX}q;d" $filelist | awk '{print $1 }')
+        cd $DataDir/$specimen
+
+        # Run fasterqdump to get full SRA
+        fasterq-dump $DataDir/$specimen
+
+        # Make an output directory
+         mkdir -p $OutputDirTrim/$specimen
+
+        # Run trimming
+          trim_galore --quality 20 --paired --retain_unpaired --gzip *_1* *_2* --output_dir $OutputDirTrim/$specimen
+
+##########
+# kraken #
+##########
+
+mkdir -p $OUTDIR/$specimen
+
+cd $OutputDirTrim/$specimen
+
+kraken2 --db $DBNAME  --threads 24 --output $OUTDIR/$specimen/${specimen}.out.txt  --report-minimizer-data --use-names --paired --gzip-compressed --classified-out $OUTDIR/$specimen/${specimen}#.fq *_val_1.fq.gz *_val_2.fq.gz
+
+# Output final file
+cp $OUTDIR/$specimen/${specimen}.classified.out.txt ${FINALOUT}/${specimen}.classified.out.txt
+
+cp $OUTDIR/$specimen/${specimen}.out.txt ${FINALOUT}/${specimen}.out.txt
+
+
+# Clean up - run once this code actually works.
+rm -rif $DataDir/$specimen
+rm -rif $OutputDirTrim/$specimen
+rm -rif $TRIMDIR/${specimen}
+rm -rif $OUTDIR/${specimen}
+
+~
+```
