@@ -75,7 +75,7 @@ qsub /nas5/user/path/scripts/PRJEB42269/fullPipeline.sh
 # Initialize #
 ##############
 #enter your user. Ex: "jhoffman1"
-user = ""
+user=""
 
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
