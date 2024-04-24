@@ -1,20 +1,41 @@
 # **Workflow**
 
-**Prefetch command**: this command takes the path to all of the SRA files and preps the SRAs for running with Kraken2.
+## **Introduction**
 
-Written by M. Forcellati, adapted by J. Hoffman
+This workflow is designed to accession Sequence Read Archives (SRAs) of target species from target studies on NCBI, then run the SRAs through Derrick Wood's [Kraken2](https://github.com/DerrickWood/kraken2.git), which is a taxonomic sequence classifier that assigns taxonomic labels to DNA sequences. The goal of this workflow is to 
+identify potential biological contaminants in SRAs. For more information on Kraken2, visit the [Kraken2 Manual](docs/MANUAL.markdown).
+
+## **Sourcing SRAs**
+
+## **Kraken2**
+
+Installing Kraken2
+```
+conda create -n xx #create a conda environment, replace xx with name
+conda install bioconda::kraken2
+```
+
+Building a Kraken database
+```
+cd /path/to/where/you/want/kraken/database
+kraken2-build --db Silva --special silva --clean  #use --clean to save lots of storage
+```
+### **Ok, let's use Kraken now**
+**Prefetch command**: this command takes the path to all of the SRA files and preps the SRAs for running with Kraken2.
+- Written by M. Forcellati, adapted by J. Hoffman
 
 ```
 # Accession all of the SRA files
-downloaddir=/path/to/your/raw_reads/
+user="" #add your user. Ex: user="jhoffman1"
+downloaddir=/nas5/$user/CG1/raw_reads/
 
-# Get the Prefetch command from conda environment.
+# Get the Prefetch command from conda environment
 conda activate /nas4/mforcellati/miniconda3/envs/CG2
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
-filelist=/path/to/your/ACCESSION.txt
+filelist=/nas5/$user/CG1/scripts/PRJEB42269.txt
 
-# Change number for every "chunk" of sample analyzed.
+# Change number for every "chunk" of sample analyzed
 	#replace xx with number of samples
 for sample in {1..xx};
 do
@@ -32,8 +53,7 @@ qsub /nas5/user/path/scripts/PRJEB42269/fullPipeline.sh
 ```
 
 **Full Pipeline**: this is the pipeline for running Kraken2 on the SRAs
-
-Written by M. Forcellati, adapted by J. Hoffman
+- Written by M. Forcellati, adapted by J. Hoffman
 
 ```
 #!/bin/bash
@@ -123,3 +143,10 @@ rm -rif $OUTDIR/${specimen}
 
 ~
 ```
+
+## **Visualizing Results**
+
+
+
+
+
