@@ -7,6 +7,16 @@ identify potential biological contaminants in SRAs. For more information on Krak
 
 ## **Sourcing SRAs**
 
+To find a project with the SRAs of the desired species:
+1. Search the genus on [BioProject](https://www.ncbi.nlm.nih.gov/bioproject?cmd=Retrieve&dopt=Overview&list_uids=192.) 
+2. Open up the project page and Google it (or any citations listed) to try to find the original citation it is paired with. 
+
+To get a list of SRA accessions:
+1. If the year is correct, click on its SRA experiments (should be under 'Number of Links')
+2. Click Send results to Run selector 
+3. Under Download, click Accession List. This will send all the SRAs associated with the BioProject to a .txt file
+4. Upload the .txt file to the computational server in an accessible location
+
 ## **Kraken2**
 
 Installing Kraken2
