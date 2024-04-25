@@ -1,0 +1,15 @@
+To find a project: 
+
+Search the genus on BioProject 
+
+Open up the project page and Google it (or any citations listed) to try to find the original citation it is paired with. 
+
+To get a list of SRA accessions:
+
+If the year is correct, click on its SRA experiments (should be under 'Number of Links.'
+
+Click Send results to Run selector. 
+
+Under Download, click Accession List. This will send all the SRAs associated with the BioProject to a .txt file. 
+
+Upload the .txt file to a server and direct the Prefetch script to this. 
