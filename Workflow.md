@@ -74,9 +74,9 @@ done
 #PBS -l ncpus=24
 #PBS -l mem=32G
 #PBS -l walltime=20:00:00
-#PBS -o /nas5/user/CG1/outerr/fullYOURFIlE.out # Note : Change user to your user
-#PBS -e /nas5/user/CG1/outerr/fullYOURFIlE.err # Note : Change user to your user
-#PBS -J 1-xx # Note: Change xx to number of samples.
+#PBS -o /nas5/user/CG1/outerr/fullYOURFIlE.out
+#PBS -e /nas5/user/CG1/outerr/fullYOURFIlE.err
+#PBS -J 1-x
 
 ######################
 # Run full pipeline. #
@@ -88,10 +88,10 @@ done
 ##############
 #enter your user. Ex: "jhoffman1"
 user=""
-specimen=""
+ID=""
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
-filelist=/nas5/$user/CG1/scripts/$specimen.txt
+filelist=/nas5/$user/CG1/scripts/$ID.txt
 
 # Directory for outputting trimmed reads [ temporary ]
 	#change to your output directory
@@ -104,17 +104,13 @@ DataDir=/nas5/$user/CG1/raw_reads
 # Initialize your bash profile.
 source ~/.bash_profile
 
-# Source conda so access to trimgalore.
-conda activate /nas4/mforcellati/miniconda3/envs/CG2
-
-
 # kraken out
 	#change to your own output 
 OUTDIR=/nas5/$user/CG1/analysis/kraken_run
 
 # final kraken out - change to project folder when done
 	#change this to your project folder (the SRA you're working on)
-FINALOUT=/nas5/$user/CG1/results/!!!
+FINALOUT=/nas5/$user/CG1/results/$ID
 
 ##############################
 # fasterqdump and TrimGalore #
