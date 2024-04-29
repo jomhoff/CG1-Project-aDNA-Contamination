@@ -42,7 +42,7 @@ xx="" #add number of samples
 downloaddir=/nas5/$user/CG1/raw_reads/
 
 # Get the Prefetch command from conda environment
-conda activate /nas4/mforcellati/miniconda3/envs/CG2
+conda activate /nas5/$user/miniconda3/envs/CG1
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
 filelist=/nas5/$user/CG1/scripts/$ID.txt
@@ -89,6 +89,9 @@ done
 #enter your user. Ex: "jhoffman1"
 user=""
 ID=""
+
+#activate conda
+conda activate /nas5/$user/miniconda3/envs/CG1
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
 filelist=/nas5/$user/CG1/scripts/$ID.txt
