@@ -37,7 +37,7 @@ kraken2-build --db Silva --special silva --clean  #use --clean to save lots of s
 ```
 # Accession all of the SRA files
 user="" #add your user. Ex: user="jhoffman1"
-ID="" #add your specimen ID
+ID="" #add your accession ID
 downloaddir=/nas5/$user/CG1/raw_reads/
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
@@ -67,9 +67,8 @@ done
 #PBS -l ncpus=24
 #PBS -l mem=32G
 #PBS -l walltime=20:00:00
-#PBS -o /nas5/user/CG1/outerr/fullYOURFIlE.out
-#PBS -e /nas5/user/CG1/outerr/fullYOURFIlE.err
-#PBS -J 1-x
+#PBS -o /nas5/jhoffman1/CG1/outerr/test.out
+#PBS -e /nas5/jhoffman1/CG1/outerr/test.err
 
 ######################
 # Run full pipeline. #
@@ -80,16 +79,19 @@ done
 # Initialize #
 ##############
 #enter your user. Ex: "jhoffman1"
-user=""
-ID=""
+user = "jhoffman1"
+specimen = "DRR199592"
+
+echo $specimen
 
 #activate conda
 source ~/.bash_profile
 export PATH=/home/$user/nas5/miniconda3/bin:$PATH
 conda activate /nas5/$user/miniconda3/envs/CG1
+
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
-filelist=/nas5/$user/CG1/scripts/$ID.txt
+filelist=/nas5/$user/CG1/scripts/$specimen.txt
 
 # Directory for outputting trimmed reads [ temporary ]
 	#change to your output directory
@@ -99,25 +101,19 @@ OutputDirTrim=/nas5/$user/CG1/trimmed_reads
 	#change directory for the output from the PrefetchCommand.sh 
 DataDir=/nas5/$user/CG1/raw_reads
 
-# Initialize your bash profile.
-source ~/.bash_profile
-
 # kraken out
 	#change to your own output 
 OUTDIR=/nas5/$user/CG1/analysis/kraken_run
 
 # final kraken out - change to project folder when done
 	#change this to your project folder (the SRA you're working on)
-FINALOUT=/nas5/$user/CG1/results/$ID
+FINALOUT=/nas5/$user/CG1/results/$specimen
 
 ##############################
 # fasterqdump and TrimGalore #
- # Get specimen name
-        specimen=$(sed "${PBS_ARRAY_INDEX}q;d" $filelist | awk '{print $1 }')
-        cd $DataDir/$specimen
 
         # Run fasterqdump to get full SRA
-        fasterq-dump $DataDir/$specimen
+        fasterq-dump $DataDir/$specimen/${specimen}.sra
 
         # Make an output directory
          mkdir -p $OutputDirTrim/$specimen
@@ -142,10 +138,10 @@ cp $OUTDIR/$specimen/${specimen}.out.txt ${FINALOUT}/${specimen}.out.txt
 
 
 # Clean up - run once this code actually works.
-rm -rif $DataDir/$specimen
-rm -rif $OutputDirTrim/$specimen
-rm -rif $TRIMDIR/${specimen}
-rm -rif $OUTDIR/${specimen}
+#rm -rif $DataDir/$specimen
+#rm -rif $OutputDirTrim/$specimen
+#rm -rif $TRIMDIR/${specimen}
+#rm -rif $OUTDIR/${specimen}
 
 ~
 ```
