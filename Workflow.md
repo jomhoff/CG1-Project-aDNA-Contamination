@@ -84,6 +84,8 @@ user=""
 ID=""
 
 #activate conda
+source ~/.bash_profile
+export PATH=/home/$user/nas5/miniconda3/bin:$PATH
 conda activate /nas5/$user/miniconda3/envs/CG1
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
