@@ -45,7 +45,7 @@ downloaddir=/nas5/$user/CG1/raw_reads/
 conda activate /nas4/mforcellati/miniconda3/envs/CG2
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
-filelist=/nas5/$user/CG1/scripts/$specimen.txt
+filelist=/nas5/$user/CG1/scripts/$ID.txt
 
 # Change number for every "chunk" of sample analyzed
 	#replace xx with number of samples
