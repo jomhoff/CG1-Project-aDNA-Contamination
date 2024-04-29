@@ -37,13 +37,15 @@ kraken2-build --db Silva --special silva --clean  #use --clean to save lots of s
 ```
 # Accession all of the SRA files
 user="" #add your user. Ex: user="jhoffman1"
+specimen="" #add your specimen ID
+xx="" #add number of samples
 downloaddir=/nas5/$user/CG1/raw_reads/
 
 # Get the Prefetch command from conda environment
 conda activate /nas4/mforcellati/miniconda3/envs/CG2
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
-filelist=/nas5/$user/CG1/scripts/PRJEB42269.txt
+filelist=/nas5/$user/CG1/scripts/$specimen.txt
 
 # Change number for every "chunk" of sample analyzed
 	#replace xx with number of samples
@@ -58,7 +60,7 @@ do
 done
 
 	#change this to the path for your directory
-qsub /nas5/user/path/scripts/PRJEB42269/fullPipeline.sh
+#qsub /nas5/user/path/scripts/$specimen/fullPipeline.sh
 
 ```
 
@@ -86,10 +88,10 @@ qsub /nas5/user/path/scripts/PRJEB42269/fullPipeline.sh
 ##############
 #enter your user. Ex: "jhoffman1"
 user=""
-
+specimen=""
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
-filelist=/nas5/$user/CG1/scripts/PRJEB42269.txt
+filelist=/nas5/$user/CG1/scripts/$specimen.txt
 
 # Directory for outputting trimmed reads [ temporary ]
 	#change to your output directory
