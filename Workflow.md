@@ -38,17 +38,13 @@ kraken2-build --db Silva --special silva --clean  #use --clean to save lots of s
 # Accession all of the SRA files
 user="" #add your user. Ex: user="jhoffman1"
 ID="" #add your specimen ID
-x=x #add number of samples
 downloaddir=/nas5/$user/CG1/raw_reads/
-
-# Get the Prefetch command from conda environment
-conda activate /nas5/$user/miniconda3/envs/CG1
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
 filelist=/nas5/$user/CG1/scripts/$ID.txt
 
 # Change number for every "chunk" of sample analyzed
-	#replace xx with number of samples
+	#replace x with number of samples
 for sample in {1..x};
 do
         specimen=$(sed "${sample}q;d" $filelist | awk '{print $1 }')
@@ -58,9 +54,6 @@ do
 
         prefetch $specimen --output-directory $downloaddir
 done
-
-	#change this to the path for your directory
-#qsub /nas5/user/path/scripts/$specimen/fullPipeline.sh
 
 ```
 
