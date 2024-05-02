@@ -79,8 +79,8 @@ done
 # Initialize #
 ##############
 #enter your user. Ex: "jhoffman1"
-user = "jhoffman1"
-specimen = "DRR199592"
+user="jhoffman1"
+specimen="DRR199592"
 
 echo $specimen
 
@@ -91,7 +91,7 @@ conda activate /nas5/$user/miniconda3/envs/CG1
 
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
-filelist=/nas5/$user/CG1/scripts/$specimen.txt
+filelist=/nas5/$user/CG1/scripts/${specimen}.txt
 
 # Directory for outputting trimmed reads [ temporary ]
 	#change to your output directory
