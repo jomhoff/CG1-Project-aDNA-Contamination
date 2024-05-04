@@ -38,10 +38,10 @@ kraken2-build --db Silva --special silva --clean  #use --clean to save lots of s
 # Accession all of the SRA files
 user="" #add your user. Ex: user="jhoffman1"
 ID="" #add your accession ID
-downloaddir=/nas5/$user/CG1/raw_reads/
+downloaddir=/nas4/$user/CG1/raw_reads/
 
 # List of every pair-end read file on NCBI SRA referred to mammoth genus
-filelist=/nas5/$user/CG1/scripts/$ID.txt
+filelist=/nas4/$user/CG1/scripts/$ID.txt
 
 # Change number for every "chunk" of sample analyzed
 	#replace x with number of samples
@@ -67,8 +67,8 @@ done
 #PBS -l ncpus=24
 #PBS -l mem=32G
 #PBS -l walltime=20:00:00
-#PBS -o /nas5/jhoffman1/CG1/outerr/test.out
-#PBS -e /nas5/jhoffman1/CG1/outerr/test.err
+#PBS -o /nas4/jhoffman1/CG1/outerr/test.out
+#PBS -e /nas4/jhoffman1/CG1/outerr/test.err
 
 ######################
 # Run full pipeline. #
@@ -84,30 +84,29 @@ specimen="DRR199592"
 
 echo $specimen
 
-#activate conda
+#activate conda -- use meghan's because she has an older version of SRA tools 
 source ~/.bash_profile
-export PATH=/home/$user/nas5/miniconda3/bin:$PATH
-conda activate /nas5/$user/miniconda3/envs/CG1
+conda activate /nas4/mforcellati/miniconda3/envs/CG2
 
 # List of files is necessary for the interactive job sample specificity
 	#replace with directory to your filelist
-filelist=/nas5/$user/CG1/scripts/${specimen}.txt
+filelist=/nas4/$user/CG1/scripts/${specimen}.txt
 
 # Directory for outputting trimmed reads [ temporary ]
 	#change to your output directory
-OutputDirTrim=/nas5/$user/CG1/trimmed_reads
+OutputDirTrim=/nas4/$user/CG1/trimmed_reads
 
 # Source of Prefetched reads
 	#change directory for the output from the PrefetchCommand.sh 
-DataDir=/nas5/$user/CG1/raw_reads
+DataDir=/nas4/$user/CG1/raw_reads
 
 # kraken out
 	#change to your own output 
-OUTDIR=/nas5/$user/CG1/analysis/kraken_run
+OUTDIR=/nas4/$user/CG1/analysis/kraken_run
 
 # final kraken out - change to project folder when done
 	#change this to your project folder (the SRA you're working on)
-FINALOUT=/nas5/$user/CG1/results/$specimen
+FINALOUT=/nas4/$user/CG1/results/$specimen
 
 ##############################
 # fasterqdump and TrimGalore #
@@ -138,10 +137,10 @@ cp $OUTDIR/$specimen/${specimen}.out.txt ${FINALOUT}/${specimen}.out.txt
 
 
 # Clean up - run once this code actually works.
-#rm -rif $DataDir/$specimen
-#rm -rif $OutputDirTrim/$specimen
-#rm -rif $TRIMDIR/${specimen}
-#rm -rif $OUTDIR/${specimen}
+rm -rif $DataDir/$specimen
+rm -rif $OutputDirTrim/$specimen
+rm -rif $TRIMDIR/${specimen}
+rm -rif $OUTDIR/${specimen}
 
 ~
 ```
