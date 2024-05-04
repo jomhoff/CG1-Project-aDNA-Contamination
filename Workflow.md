@@ -65,10 +65,10 @@ done
 #PBS -q batch
 #PBS -S /bin/bash
 #PBS -l ncpus=24
-#PBS -l mem=32G
+#PBS -l mem=100G
 #PBS -l walltime=20:00:00
-#PBS -o /nas4/jhoffman1/CG1/outerr/test.out
-#PBS -e /nas4/jhoffman1/CG1/outerr/test.err
+#PBS -o /nas4/jhoffman1/CG1/outerr/fullpipeline.out
+#PBS -e /nas4/jhoffman1/CG1/outerr/fullpipeline.err
 
 ######################
 # Run full pipeline. #
@@ -100,6 +100,9 @@ OutputDirTrim=/nas4/$user/CG1/trimmed_reads
 	#change directory for the output from the PrefetchCommand.sh 
 DataDir=/nas4/$user/CG1/raw_reads
 
+#Database path - Path to the Kraken Database
+DATABASE=/nas5/mforcellati/CG1/kraken/silva
+
 # kraken out
 	#change to your own output 
 OUTDIR=/nas4/$user/CG1/analysis/kraken_run
@@ -128,7 +131,7 @@ mkdir -p $OUTDIR/$specimen
 
 cd $OutputDirTrim/$specimen
 
-kraken2 --db $DBNAME  --threads 24 --output $OUTDIR/$specimen/${specimen}.out.txt  --report-minimizer-data --use-names --paired --gzip-compressed --classified-out $OUTDIR/$specimen/${specimen}#.fq *_val_1.fq.gz *_val_2.fq.gz
+kraken2 --db $DATABASE  --threads 24 --output $OUTDIR/$specimen/${specimen}.out.txt  --report-minimizer-data --use-names --paired --gzip-compressed --classified-out $OUTDIR/$specimen/${specimen}#.fq *_val_1.fq.gz *_val_2.fq.gz
 
 # Output final file
 cp $OUTDIR/$specimen/${specimen}.classified.out.txt ${FINALOUT}/${specimen}.classified.out.txt
