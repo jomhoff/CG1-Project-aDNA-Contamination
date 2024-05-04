@@ -113,7 +113,7 @@ FINALOUT=/nas5/$user/CG1/results/$specimen
 # fasterqdump and TrimGalore #
 
         # Run fasterqdump to get full SRA
-        fasterq-dump $DataDir/$specimen/${specimen}.sra
+        fasterq-dump $DataDir/$specimen
 
         # Make an output directory
          mkdir -p $OutputDirTrim/$specimen
