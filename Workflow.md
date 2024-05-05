@@ -5,6 +5,8 @@
 This workflow is designed to accession Sequence Read Archives (SRAs) of target species from target studies on NCBI, then run the SRAs through Derrick Wood's [Kraken2](https://github.com/DerrickWood/kraken2.git), which is a taxonomic sequence classifier that assigns taxonomic labels to DNA sequences. The goal of this workflow is to 
 identify potential biological contaminants in SRAs. For more information on Kraken2, visit the [Kraken2 Manual](docs/MANUAL.markdown).
 
+It is important to not that this is designed to function on the AMNH's Huxley Computational Cluster. Buyer beware!
+
 ## **Sourcing SRAs**
 
 To find a project with the SRAs of the desired species:
@@ -272,4 +274,7 @@ pie2 + scale_fill_manual(values=c("lightblue", "grey")) +  blank_theme +
 ```
 
 Wahoo! You should have plots that look like so:
+![read classification](piechart_reads.png)
+![read classified](piechart_classified.png)
 
+Three gold stars if you made it this far.
