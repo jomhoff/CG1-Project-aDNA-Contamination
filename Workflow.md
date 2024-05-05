@@ -148,9 +148,128 @@ rm -rif $OUTDIR/${specimen}
 ~
 ```
 
-## **Visualizing Results**
+## **Final Analysis**
+
+In order to have an interpretable outcome, we are calculating the amount of mammalian DNA vs everythign else. I know, not super specific, but it's a class project...what else can you do.
+
+```
+#PBS -q batch
+#PBS -S /bin/bash
+#PBS -l ncpus=24
+#PBS -l mem=32G
+#PBS -l walltime=20:00:00
+#PBS -o /nas5/mforcellati/CG1/outerr/final.out
+#PBS -e /nas5/mforcellati/CG1/outerr/final.err
+
+# Note: Change 6 to number of projects
+
+######################
+# Run full pipeline. #
+######################
+
+# INFO - This script uses regex and wc -l on the final classified output of each analysis to provide two important metrics. One is % unclassified vs classified per analysis. Second is the proportion, within classified results, of reads mapping to given kingdom.
+
+##############
 
 
+########################
+# Variable Definitions #
+########################
+
+# OUT: Project, N, Unclassified, Total, N_Mammalia_or_Mitochondria
+finalout=/nas5/$user/CG1/results/finalResults/mammoth_stats.csv
+cd /nas5/$user/CG1/results
+projectlist=/nas5/$user/CG1/scripts/final_analysis_dir/projectlist.txt
+### Put in for loop ###
+
+for pro in {1..6};
+do
 
 
+project=$(sed "${pro}q;d" $projectlist | awk '{print $1 }')
+projectdir=/nas5/$user/CG1/results/${project}
+
+cd $projectdir 
+
+N_samples=$(ls -l | tail -n+2 | wc -l)
+
+N_reads_Unclassified=$(grep 'unclassified' * | wc -l)
+N_reads_Classified=$(grep -v 'unclassified' * | wc -l)
+N_reads_total=$(cat * | wc -l)
+N_classified_Mammalia_Mitochondria=$( grep -v 'unclassified' * | grep -e 'Mammalia' -e 'Mitochondria' | wc -l)
+
+echo "$project,$N_samples,$N_reads_Unclassified,$N_reads_Classified,$N_reads_total,$N_classified_Mammalia_Mitochondria" >> $finalout
+
+done
+```
+
+## **Visualizing with Piecharts**
+
+Ok fine you sickos, we can use R now. 
+
+This is a basic code that relies on ggplot2 to plot a piechart of the percentages of non-mammalian results and mammalian results, as well as non-classified to classified reads
+
+```
+library(ggplot2)
+library(scales)
+
+species <- "" #insert species
+project <- "" #insert project number
+
+reads_classified <- #insert number of classified reads
+reads_unclassified <- #insert number of classified reads
+reads_classified_mammal <- #insert number of classified mammal reads
+
+NM <- reads_classified-reads_classified_mammal #computes non-mammal classified 
+M <- reads_classified_mammal #straightforward and probably unnecessary. 
+tr <- reads_classified+reads_unclassified #total reads
+
+title=paste0(species, " ", project)
+
+#create a data frame
+df1 <- data.frame(
+  Classified_16S = c("Non-Mammal", "Mammal"),
+  value = c(NM, M)
+)
+
+df2 <- data.frame(
+  Read_Classification = c("Unclassified", "Classified"),
+  value = c(reads_unclassified, reads_classified)
+)
+
+#create a stacked barchart
+bp1<- ggplot(df1, aes(x="", y=value, fill=Classified_16S))+
+  geom_bar(width = 1, stat = "identity")
+
+bp2<- ggplot(df2, aes(x="", y=value, fill=Read_Classification))+
+  geom_bar(width = 1, stat = "identity")
+
+#now a piechart
+pie1 <- bp1 + coord_polar("y", start=0)
+
+pie2 <- bp2 + coord_polar("y", start=0)
+
+#custom piechart aesthetics 
+blank_theme <- theme_minimal()+
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.border = element_blank(),
+    panel.grid=element_blank(),
+    axis.ticks = element_blank(),
+    plot.title=element_text()
+  )
+
+pie1 + scale_fill_manual(values=c("pink", "lightblue")) +  blank_theme +
+  theme(axis.text.x=element_blank(), plot.title=element_text(hjust=0.5)) +
+  geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                label = percent(value/reads_classified, accuracy = 0.01)), size=5) + ggtitle(title)
+
+pie2 + scale_fill_manual(values=c("lightblue", "grey")) +  blank_theme +
+  theme(axis.text.x=element_blank(), plot.title=element_text(hjust=0.5)) +
+  geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                label = percent(value/tr, accuracy = 0.01)), size=5) + ggtitle(title)
+```
+
+Wahoo! You should have plots that look like so:
 
